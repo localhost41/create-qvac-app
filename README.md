@@ -113,4 +113,17 @@ The generated app includes a README, `package.json`, TypeScript config, and
 a basic chat example that calls the QVAC local HTTP server at
 `http://localhost:8000/v1/chat/completions`.
 
+### Testing packaging
+
+To verify that `npm pack` works (a prerequisite for publishing), build the
+project and run `npm pack`:
+
+```bash
+pnpm build
+npm pack
+```
+
+This will create a tarball (e.g., `localhostlabs-create-qvac-app-0.1.0-alpha.1.tgz`)
+containing only the files listed in the `files` field of `package.json`.
+
 CI runs the same health checks on pull requests and pushes to `main`.
