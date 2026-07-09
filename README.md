@@ -11,4 +11,11 @@ pnpm test
 pnpm build
 ```
 
+Run the CLI locally after building:
+
+```bash
+pnpm build
+pnpm cli -- --help
+```
+
 CI runs the same health checks on pull requests and pushes to `main`.
