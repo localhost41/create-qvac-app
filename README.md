@@ -2,7 +2,7 @@
 
 Public QVAC developer tooling from LocalHost Labs.
 
-> **Alpha Release:** This package is currently in **alpha** (v0.1.0‑alpha.1).  
+> **Alpha Release:** This package is currently in **alpha** (v0.1.0-alpha.1).  
 > Expect breaking changes. Feedback is welcome.
 
 ## Quickstart
