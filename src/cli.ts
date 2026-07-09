@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 import { mkdirSync, readdirSync, writeFileSync } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
+import { createInterface } from "node:readline/promises";
+import type { Readable, Writable } from "node:stream";
 import { pathToFileURL } from "node:url";
 
 export const HELP_TEXT = `create-qvac-app
@@ -9,16 +11,26 @@ Usage:
   create-qvac-app <project-directory> [options]
 
 Options:
-  --template node-chat  Scaffold a Node TypeScript QVAC chat app
+  --template node-chat  Scaffold a Node TypeScript QVAC chat app without prompting
   -h, --help            Show help text
 `;
 
 export interface CliIo {
-  stdout: Pick<NodeJS.WriteStream, "write">;
-  stderr: Pick<NodeJS.WriteStream, "write">;
+  stdin: Readable;
+  stdout: Writable;
+  stderr: Writable;
 }
 
 const NODE_CHAT_TEMPLATE = "node-chat";
+const TEMPLATES = [
+  {
+    name: NODE_CHAT_TEMPLATE,
+    description: "Node TypeScript QVAC chat app",
+    create: createNodeChatApp,
+  },
+] as const;
+
+type TemplateName = (typeof TEMPLATES)[number]["name"];
 
 function packageNameFromDirectory(projectDirectory: string): string {
   return basename(resolve(projectDirectory))
@@ -162,17 +174,60 @@ main().catch((error: unknown) => {
   );
 }
 
-export function runCli(
+function isTemplateName(value: string): value is TemplateName {
+  return TEMPLATES.some((template) => template.name === value);
+}
+
+async function pickTemplate(io: CliIo): Promise<TemplateName | undefined> {
+  io.stdout.write("Choose a template:\n");
+
+  TEMPLATES.forEach((template, index) => {
+    io.stdout.write(`  ${index + 1}. ${template.name} - ${template.description}\n`);
+  });
+
+  const reader = createInterface({
+    input: io.stdin,
+    output: io.stdout,
+  });
+
+  try {
+    const answer = (await reader.question("Template: ")).trim();
+    const selectedIndex = Number.parseInt(answer, 10);
+
+    if (
+      Number.isInteger(selectedIndex) &&
+      selectedIndex >= 1 &&
+      selectedIndex <= TEMPLATES.length
+    ) {
+      return TEMPLATES[selectedIndex - 1].name;
+    }
+
+    if (isTemplateName(answer)) {
+      return answer;
+    }
+
+    io.stderr.write(`Unknown template: ${answer}\n\n${HELP_TEXT}`);
+    return undefined;
+  } finally {
+    reader.close();
+  }
+}
+
+export async function runCli(
   args: string[] = process.argv.slice(2),
-  io: CliIo = { stdout: process.stdout, stderr: process.stderr },
-): number {
+  io: CliIo = {
+    stdin: process.stdin,
+    stdout: process.stdout,
+    stderr: process.stderr,
+  },
+): Promise<number> {
   if (args.length === 0 || args.includes("--help") || args.includes("-h")) {
     io.stdout.write(HELP_TEXT);
     return 0;
   }
 
   const [projectDirectory, ...options] = args;
-  let template = NODE_CHAT_TEMPLATE;
+  let template: TemplateName | undefined;
 
   for (let index = 0; index < options.length; index += 1) {
     const option = options[index];
@@ -185,6 +240,11 @@ export function runCli(
         return 1;
       }
 
+      if (!isTemplateName(value)) {
+        io.stderr.write(`Unknown template: ${value}\n\n${HELP_TEXT}`);
+        return 1;
+      }
+
       template = value;
       index += 1;
       continue;
@@ -194,13 +254,14 @@ export function runCli(
     return 1;
   }
 
-  if (template !== NODE_CHAT_TEMPLATE) {
-    io.stderr.write(`Unknown template: ${template}\n\n${HELP_TEXT}`);
+  template ??= await pickTemplate(io);
+
+  if (!template) {
     return 1;
   }
 
   try {
-    createNodeChatApp(projectDirectory);
+    TEMPLATES.find((candidate) => candidate.name === template)?.create(projectDirectory);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     io.stderr.write(`${message}\n`);
@@ -212,5 +273,5 @@ export function runCli(
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  process.exitCode = runCli();
+  process.exitCode = await runCli();
 }
