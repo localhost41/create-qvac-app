@@ -1,7 +1,13 @@
 {
   "name": "@localhostlabs/create-qvac-app",
   "version": "0.1.0-alpha.1",
+  "private": true,
   "description": "QVAC developer tooling package: create-qvac-app",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/localhost41/create-qvac-app.git"
+  },
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -20,6 +26,9 @@
     "@types/node": "^26.0.0",
     "typescript": "^5.9.0",
     "vitest": "^4.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   },
   "packageManager": "pnpm@11.10.0"
 }
