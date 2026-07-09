@@ -9,6 +9,23 @@ import { describe, expect, it } from "vitest";
 import { name } from "../src/index.js";
 
 const execFileAsync = promisify(execFile);
+const TWO_MINUTES = 120_000;
+
+async function runCommand(
+  command: string,
+  args: string[],
+  cwd: string,
+): Promise<{ stderr: string; stdout: string }> {
+  return execFileAsync(command, args, {
+    cwd,
+    env: {
+      ...process.env,
+      CI: "1",
+    },
+    timeout: TWO_MINUTES,
+    maxBuffer: 1024 * 1024 * 10,
+  });
+}
 
 async function runCliWithInput(
   cliPath: string,
@@ -82,7 +99,39 @@ describe("create-qvac-app", () => {
     expect(readFileSync(join(appDirectory, "src/index.ts"), "utf8")).toContain(
       "QVAC_BASE_URL",
     );
+
+    const packageJson = JSON.parse(
+      readFileSync(join(appDirectory, "package.json"), "utf8"),
+    ) as {
+      scripts: Record<string, string>;
+      devDependencies: Record<string, string>;
+    };
+    expect(packageJson.scripts.dev).toBe("pnpm build && pnpm start");
+    expect(packageJson.devDependencies).not.toHaveProperty("tsx");
   });
+
+  it(
+    "scaffolds an app that installs and builds from a clean directory",
+    async () => {
+      const cliPath = fileURLToPath(new URL("../dist/cli.js", import.meta.url));
+      const tempDirectory = await mkdtemp(join(tmpdir(), "create-qvac-app-"));
+      const appDirectory = join(tempDirectory, "first-run");
+
+      await execFileAsync(process.execPath, [
+        cliPath,
+        appDirectory,
+        "--template",
+        "node-chat",
+      ]);
+
+      await runCommand("pnpm", ["install"], appDirectory);
+      const { stderr, stdout } = await runCommand("pnpm", ["build"], appDirectory);
+
+      expect(`${stdout}${stderr}`).toContain("tsc -p tsconfig.json");
+      expect(existsSync(join(appDirectory, "dist/index.js"))).toBe(true);
+    },
+    TWO_MINUTES,
+  );
 
   it("lets users choose a template", async () => {
     const cliPath = fileURLToPath(new URL("../dist/cli.js", import.meta.url));
