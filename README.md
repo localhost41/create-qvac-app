@@ -127,3 +127,14 @@ This will create a tarball (e.g., `localhostlabs-create-qvac-app-0.1.0-alpha.1.t
 containing only the files listed in the `files` field of `package.json`.
 
 CI runs the same health checks on pull requests and pushes to `main`.
+
+## Alpha release readiness
+
+- [x] Package version is `0.1.0-alpha.1` (alpha).
+- [x] CHANGELOG includes release notes for `v0.1.0-alpha.1`.
+- [x] `npm pack` builds successfully: run `pnpm build && npm pack`.
+- [x] Metadata checks passing (package name, bin, main, files fields).
+
+**Note:** The `"private": true` field prevents accidental publishing. When it is
+time to publish, `--access public` must be used and the `private` field should
+be removed or set to `false`.

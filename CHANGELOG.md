@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Alpha release readiness checks and documentation.
+
 ## v0.1.0-alpha.1 - 2025-01-30
 
 - Initial repository scaffold.
