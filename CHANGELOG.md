@@ -2,8 +2,6 @@
 
 ## Unreleased
 
-- No notable changes yet.
-
 ## v0.1.0-alpha.1
 
 - Initial repository scaffold.
