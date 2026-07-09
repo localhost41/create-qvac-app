@@ -1,7 +1,6 @@
 {
   "name": "@localhostlabs/create-qvac-app",
   "version": "0.1.0-alpha.1",
-  "private": true,
   "description": "QVAC developer tooling package: create-qvac-app",
   "license": "MIT",
   "repository": {
@@ -14,13 +13,23 @@
   "bin": {
     "create-qvac-app": "dist/cli.js"
   },
-  "files": ["dist", "README.md", "CHANGELOG.md"],
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "cli": "node dist/cli.js",
     "test": "pnpm build && vitest run",
     "lint": "tsc -p tsconfig.json --noEmit",
-    "prepack": "pnpm build"
+    "prepack": "pnpm build",
+    "verify": "pnpm lint && pnpm test && pnpm pack:check",
+    "pack:check": "pnpm build && vitest run test/pack.test.ts"
   },
   "devDependencies": {
     "@types/node": "^26.0.0",

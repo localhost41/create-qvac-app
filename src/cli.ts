@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-import { mkdirSync, readdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readdirSync, realpathSync, writeFileSync } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
 import { createInterface } from "node:readline/promises";
 import type { Readable, Writable } from "node:stream";
-import { pathToFileURL } from "node:url";
+import { fileURLToPath } from "node:url";
 
 export const HELP_TEXT = `create-qvac-app
 
@@ -70,13 +70,12 @@ function createNodeChatApp(projectDirectory: string): void {
         private: true,
         type: "module",
         scripts: {
-          dev: "tsx src/index.ts",
+          dev: "pnpm build && pnpm start",
           build: "tsc -p tsconfig.json",
           start: "node dist/index.js",
         },
         devDependencies: {
           "@types/node": "^26.0.0",
-          tsx: "^4.20.0",
           typescript: "^5.9.0",
         },
       },
@@ -272,6 +271,9 @@ export async function runCli(
   return 0;
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (
+  process.argv[1] &&
+  realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url))
+) {
   process.exitCode = await runCli();
 }

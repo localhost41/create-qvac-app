@@ -51,6 +51,9 @@ pnpm dev
 The app sends one chat completion request to your local QVAC server and prints
 the response text.
 
+The generated app uses `tsc` and `node` directly, so first-run installs work
+with pnpm 11 without approving ignored dependency build scripts.
+
 To point at a non-default local endpoint:
 
 ```bash
@@ -115,15 +118,14 @@ a basic chat example that calls the QVAC local HTTP server at
 
 ### Testing packaging
 
-To verify that `npm pack` works (a prerequisite for publishing), build the
-project and run `npm pack`:
+To verify the package before publishing, run:
 
 ```bash
-pnpm build
-npm pack
+pnpm verify
 ```
 
-This will create a tarball (e.g., `localhostlabs-create-qvac-app-0.1.0-alpha.1.tgz`)
-containing only the files listed in the `files` field of `package.json`.
+This lints, runs the unit and generated-app first-run tests, creates a packed
+tarball, installs that tarball into a clean temp project, and checks the
+installed CLI can run.
 
 CI runs the same health checks on pull requests and pushes to `main`.
