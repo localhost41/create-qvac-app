@@ -1,6 +1,6 @@
 {
   "name": "@localhostlabs/create-qvac-app",
-  "version": "0.1.0-alpha.0",
+  "version": "0.1.0-alpha.1",
   "description": "QVAC developer tooling package: create-qvac-app",
   "type": "module",
   "main": "dist/index.js",
@@ -13,7 +13,8 @@
     "build": "tsc -p tsconfig.json",
     "cli": "node dist/cli.js",
     "test": "pnpm build && vitest run",
-    "lint": "tsc -p tsconfig.json --noEmit"
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "prepack": "pnpm build"
   },
   "devDependencies": {
     "@types/node": "^26.0.0",
