@@ -1,18 +1,165 @@
 #!/usr/bin/env node
+import { mkdirSync, readdirSync, writeFileSync } from "node:fs";
+import { basename, dirname, join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 
 export const HELP_TEXT = `create-qvac-app
 
 Usage:
-  create-qvac-app [options]
+  create-qvac-app <project-directory> [options]
 
 Options:
-  -h, --help  Show help text
+  --template node-chat  Scaffold a Node TypeScript QVAC chat app
+  -h, --help            Show help text
 `;
 
 export interface CliIo {
   stdout: Pick<NodeJS.WriteStream, "write">;
   stderr: Pick<NodeJS.WriteStream, "write">;
+}
+
+const NODE_CHAT_TEMPLATE = "node-chat";
+
+function packageNameFromDirectory(projectDirectory: string): string {
+  return basename(resolve(projectDirectory))
+    .toLowerCase()
+    .replace(/^[._]+/, "")
+    .replace(/[^a-z0-9._-]+/g, "-")
+    .replace(/^-+|-+$/g, "") || "qvac-chat-app";
+}
+
+function writeProjectFile(
+  projectRoot: string,
+  relativePath: string,
+  contents: string,
+): void {
+  const destination = join(projectRoot, relativePath);
+  mkdirSync(dirname(destination), { recursive: true });
+  writeFileSync(destination, contents);
+}
+
+function createNodeChatApp(projectDirectory: string): void {
+  const projectRoot = resolve(projectDirectory);
+  mkdirSync(projectRoot, { recursive: true });
+
+  if (readdirSync(projectRoot).length > 0) {
+    throw new Error(`Target directory is not empty: ${projectDirectory}`);
+  }
+
+  const packageName = packageNameFromDirectory(projectDirectory);
+
+  writeProjectFile(
+    projectRoot,
+    "package.json",
+    `${JSON.stringify(
+      {
+        name: packageName,
+        version: "0.1.0",
+        private: true,
+        type: "module",
+        scripts: {
+          dev: "tsx src/index.ts",
+          build: "tsc -p tsconfig.json",
+          start: "node dist/index.js",
+        },
+        devDependencies: {
+          "@types/node": "^26.0.0",
+          tsx: "^4.20.0",
+          typescript: "^5.9.0",
+        },
+      },
+      null,
+      2,
+    )}\n`,
+  );
+
+  writeProjectFile(
+    projectRoot,
+    "README.md",
+    `# ${packageName}
+
+Node TypeScript QVAC chat example.
+
+## Run
+
+Start the QVAC local HTTP server, then run:
+
+\`\`\`bash
+pnpm install
+pnpm dev
+\`\`\`
+
+The example sends a single chat request to \`http://localhost:8000/v1/chat/completions\`.
+Set \`QVAC_BASE_URL\` to use a different local endpoint.
+`,
+  );
+
+  writeProjectFile(
+    projectRoot,
+    "tsconfig.json",
+    `${JSON.stringify(
+      {
+        compilerOptions: {
+          target: "ES2022",
+          module: "NodeNext",
+          moduleResolution: "NodeNext",
+          strict: true,
+          esModuleInterop: true,
+          outDir: "dist",
+          skipLibCheck: true,
+        },
+        include: ["src"],
+      },
+      null,
+      2,
+    )}\n`,
+  );
+
+  writeProjectFile(
+    projectRoot,
+    "src/index.ts",
+    `const baseUrl = process.env.QVAC_BASE_URL ?? "http://localhost:8000";
+
+interface ChatCompletionResponse {
+  choices?: Array<{
+    message?: {
+      content?: string;
+    };
+  }>;
+}
+
+async function main(): Promise<void> {
+  const response = await fetch(\`\${baseUrl}/v1/chat/completions\`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "qvac-local",
+      messages: [
+        {
+          role: "user",
+          content: "Say hello from a Node TypeScript QVAC app.",
+        },
+      ],
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(\`QVAC request failed: \${response.status} \${response.statusText}\`);
+  }
+
+  const data = (await response.json()) as ChatCompletionResponse;
+  const message = data.choices?.[0]?.message?.content ?? "(no response text)";
+  console.log(message);
+}
+
+main().catch((error: unknown) => {
+  console.error(error instanceof Error ? error.message : error);
+  process.exitCode = 1;
+});
+`,
+  );
 }
 
 export function runCli(
@@ -24,8 +171,44 @@ export function runCli(
     return 0;
   }
 
-  io.stderr.write(`Unknown option: ${args[0]}\n\n${HELP_TEXT}`);
-  return 1;
+  const [projectDirectory, ...options] = args;
+  let template = NODE_CHAT_TEMPLATE;
+
+  for (let index = 0; index < options.length; index += 1) {
+    const option = options[index];
+
+    if (option === "--template") {
+      const value = options[index + 1];
+
+      if (!value) {
+        io.stderr.write(`Missing value for --template\n\n${HELP_TEXT}`);
+        return 1;
+      }
+
+      template = value;
+      index += 1;
+      continue;
+    }
+
+    io.stderr.write(`Unknown option: ${option}\n\n${HELP_TEXT}`);
+    return 1;
+  }
+
+  if (template !== NODE_CHAT_TEMPLATE) {
+    io.stderr.write(`Unknown template: ${template}\n\n${HELP_TEXT}`);
+    return 1;
+  }
+
+  try {
+    createNodeChatApp(projectDirectory);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    io.stderr.write(`${message}\n`);
+    return 1;
+  }
+
+  io.stdout.write(`Created QVAC ${template} app in ${resolve(projectDirectory)}\n`);
+  return 0;
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
