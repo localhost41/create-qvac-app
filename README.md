@@ -54,10 +54,12 @@ the response text.
 The generated app uses `tsc` and `node` directly, so first-run installs work
 with pnpm 11 without approving ignored dependency build scripts.
 
-To point at a non-default local endpoint:
+To point at a non-default local endpoint, set either the server origin or an
+OpenAI-compatible `/v1` base URL:
 
 ```bash
 QVAC_BASE_URL=http://localhost:8001 pnpm dev
+QVAC_BASE_URL=http://localhost:8001/v1 pnpm dev
 ```
 
 ## Troubleshooting
@@ -74,10 +76,12 @@ For the default endpoint:
 curl http://localhost:8000/v1/chat/completions
 ```
 
-If the server is on another port or host, restart the app with `QVAC_BASE_URL`:
+If the server is on another port or host, restart the app with `QVAC_BASE_URL`.
+Both origin-style and OpenAI-style `/v1` base URLs are accepted:
 
 ```bash
 QVAC_BASE_URL=http://localhost:8001 pnpm dev
+QVAC_BASE_URL=http://localhost:8001/v1 pnpm dev
 ```
 
 ## Local development
