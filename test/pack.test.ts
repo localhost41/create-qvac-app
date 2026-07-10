@@ -58,7 +58,7 @@ describe("package tarball", () => {
             private: true,
             type: "module",
             dependencies: {
-              "@localhostlabs/create-qvac-app": tarballPath,
+              "@localhost41/create-qvac-app": tarballPath,
             },
           },
           null,
