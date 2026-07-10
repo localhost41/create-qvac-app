@@ -2,10 +2,17 @@
 
 ## Unreleased
 
+- No unreleased changes.
+
+## v0.1.0-alpha.2 - 2026-07-10
+
 - Remove `tsx` from generated apps so pnpm 11 installs do not require approving
   ignored `esbuild` build scripts.
 - Add generated-app install/build and packed-tarball installability checks.
 - Add publish-ready package metadata and license file.
+- Add Node 22, 24, and 26 CI coverage plus a deeper package verifier for
+  packed-file contents, installed package imports, CLI help, and generated app
+  build checks.
 
 ## v0.1.0-alpha.1 - 2025-01-30
 
