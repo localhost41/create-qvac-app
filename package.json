@@ -7,6 +7,10 @@
     "type": "git",
     "url": "git+https://github.com/localhost41/create-qvac-app.git"
   },
+  "bugs": {
+    "url": "https://github.com/localhost41/create-qvac-app/issues"
+  },
+  "homepage": "https://github.com/localhost41/create-qvac-app#readme",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -29,7 +33,7 @@
     "lint": "tsc -p tsconfig.json --noEmit",
     "prepack": "pnpm build",
     "verify": "pnpm lint && pnpm test && pnpm pack:check",
-    "pack:check": "pnpm build && vitest run test/pack.test.ts"
+    "pack:check": "pnpm build && node scripts/verify-package.mjs && vitest run test/pack.test.ts"
   },
   "devDependencies": {
     "@types/node": "^26.0.0",
@@ -37,7 +41,7 @@
     "vitest": "^4.0.0"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22 <27"
   },
   "packageManager": "pnpm@11.10.0"
 }
