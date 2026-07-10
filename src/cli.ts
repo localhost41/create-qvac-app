@@ -147,7 +147,10 @@ interface ChatCompletionResponse {
 }
 
 async function main(): Promise<void> {
-  const response = await fetch(chatCompletionsUrl(baseUrl), {
+  const endpoint = chatCompletionsUrl(baseUrl);
+  let response: Response;
+  try {
+    response = await fetch(endpoint, {
     method: "POST",
     headers: {
       "content-type": "application/json",
@@ -162,9 +165,15 @@ async function main(): Promise<void> {
       ],
     }),
   });
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : String(error);
+    throw new Error(
+      \`QVAC request failed at \${endpoint}. Is QVAC running? Check QVAC_BASE_URL. \${reason}\`,
+    );
+  }
 
   if (!response.ok) {
-    throw new Error(\`QVAC request failed: \${response.status} \${response.statusText}\`);
+    throw new Error(\`QVAC request failed at \${endpoint}: \${response.status} \${response.statusText}\`);
   }
 
   const data = (await response.json()) as ChatCompletionResponse;
