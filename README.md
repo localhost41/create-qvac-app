@@ -1,6 +1,6 @@
 # create-qvac-app
 
-Public QVAC developer tooling from LocalHost Labs.
+Public QVAC developer tooling from localhost41.
 
 > **Alpha Release:** This package is currently in **alpha** (v0.1.0-alpha.1).  
 > Expect breaking changes. Feedback is welcome.
@@ -22,13 +22,13 @@ uses a different local URL, set `QVAC_BASE_URL` when running the app.
 Use the package with `pnpm dlx`:
 
 ```bash
-pnpm dlx @localhostlabs/create-qvac-app my-qvac-chat --template node-chat
+pnpm dlx @localhost41/create-qvac-app my-qvac-chat --template node-chat
 ```
 
 Or install the CLI globally:
 
 ```bash
-pnpm add -g @localhostlabs/create-qvac-app
+pnpm add -g @localhost41/create-qvac-app
 create-qvac-app my-qvac-chat --template node-chat
 ```
 
