@@ -131,6 +131,13 @@ Set \`QVAC_BASE_URL\` to use a different local endpoint.
     "src/index.ts",
     `const baseUrl = process.env.QVAC_BASE_URL ?? "http://localhost:8000";
 
+function chatCompletionsUrl(rawBaseUrl: string): string {
+  const normalized = rawBaseUrl.replace(/\\/+$/, "");
+  return normalized.endsWith("/v1")
+    ? \`\${normalized}/chat/completions\`
+    : \`\${normalized}/v1/chat/completions\`;
+}
+
 interface ChatCompletionResponse {
   choices?: Array<{
     message?: {
@@ -140,7 +147,7 @@ interface ChatCompletionResponse {
 }
 
 async function main(): Promise<void> {
-  const response = await fetch(\`\${baseUrl}/v1/chat/completions\`, {
+  const response = await fetch(chatCompletionsUrl(baseUrl), {
     method: "POST",
     headers: {
       "content-type": "application/json",
