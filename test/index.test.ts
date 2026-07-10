@@ -102,6 +102,9 @@ describe("create-qvac-app", () => {
     expect(readFileSync(join(appDirectory, "src/index.ts"), "utf8")).toContain(
       'normalized.endsWith("/v1")',
     );
+    expect(readFileSync(join(appDirectory, "src/index.ts"), "utf8")).toContain(
+      "Is QVAC running? Check QVAC_BASE_URL",
+    );
 
     const packageJson = JSON.parse(
       readFileSync(join(appDirectory, "package.json"), "utf8"),
