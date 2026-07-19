@@ -1,7 +1,16 @@
 {
   "name": "@localhost41/create-qvac-app",
   "version": "0.1.0-alpha.2",
-  "description": "QVAC developer tooling package: create-qvac-app",
+  "description": "Scaffold a Node.js TypeScript app for local QVAC inference",
+  "keywords": [
+    "qvac",
+    "create-app",
+    "project-template",
+    "scaffolding",
+    "local-ai",
+    "openai-compatible",
+    "typescript"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
