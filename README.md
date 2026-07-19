@@ -1,6 +1,9 @@
 # create-qvac-app
 
-Public QVAC developer tooling from localhost41.
+Scaffold a Node.js TypeScript app that talks to a local QVAC server.
+
+> Independent community project maintained by localhost41. Not affiliated with
+> or endorsed by Tether or QVAC.
 
 > **Alpha Release:** This package is currently in **alpha** (v0.1.0-alpha.1).  
 > Expect breaking changes. Feedback is welcome.
@@ -14,7 +17,7 @@ Public QVAC developer tooling from localhost41.
 - A local QVAC HTTP server running before you run the generated app.
 
 The `node-chat` template sends chat requests to
-`http://localhost:8000/v1/chat/completions` by default. If your QVAC server
+`http://127.0.0.1:11434/v1/chat/completions` by default. If your QVAC server
 uses a different local URL, set `QVAC_BASE_URL` when running the app.
 
 ### Scaffold an app
@@ -73,7 +76,7 @@ the app uses.
 For the default endpoint:
 
 ```bash
-curl http://localhost:8000/v1/chat/completions
+curl http://127.0.0.1:11434/v1/models
 ```
 
 If the server is on another port or host, restart the app with `QVAC_BASE_URL`.
@@ -118,7 +121,7 @@ Available templates:
 
 The generated app includes a README, `package.json`, TypeScript config, and
 a basic chat example that calls the QVAC local HTTP server at
-`http://localhost:8000/v1/chat/completions`.
+`http://127.0.0.1:11434/v1/chat/completions`.
 
 ### Testing packaging
 

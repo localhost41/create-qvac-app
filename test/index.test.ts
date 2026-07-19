@@ -94,7 +94,7 @@ describe("create-qvac-app", () => {
     expect(existsSync(join(appDirectory, "src/index.ts"))).toBe(true);
 
     expect(readFileSync(join(appDirectory, "README.md"), "utf8")).toContain(
-      "http://localhost:8000/v1/chat/completions",
+      "http://127.0.0.1:11434/v1/chat/completions",
     );
     expect(readFileSync(join(appDirectory, "src/index.ts"), "utf8")).toContain(
       "QVAC_BASE_URL",

@@ -100,7 +100,7 @@ pnpm install
 pnpm dev
 \`\`\`
 
-The example sends a single chat request to \`http://localhost:8000/v1/chat/completions\`.
+The example sends a single chat request to \`http://127.0.0.1:11434/v1/chat/completions\`.
 Set \`QVAC_BASE_URL\` to use a different local endpoint.
 `,
   );
@@ -129,7 +129,7 @@ Set \`QVAC_BASE_URL\` to use a different local endpoint.
   writeProjectFile(
     projectRoot,
     "src/index.ts",
-    `const baseUrl = process.env.QVAC_BASE_URL ?? "http://localhost:8000";
+    `const baseUrl = process.env.QVAC_BASE_URL ?? "http://127.0.0.1:11434";
 
 function chatCompletionsUrl(rawBaseUrl: string): string {
   const normalized = rawBaseUrl.replace(/\\/+$/, "");
