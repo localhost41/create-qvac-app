@@ -5,7 +5,7 @@ Scaffold a Node.js TypeScript app that talks to a local QVAC server.
 > Independent community project maintained by localhost41. Not affiliated with
 > or endorsed by Tether or QVAC.
 
-> **Alpha Release:** This package is currently in **alpha** (v0.1.0-alpha.1).  
+> **Alpha Release:** This package is currently in **alpha** (v0.1.0-alpha.3).
 > Expect breaking changes. Feedback is welcome.
 
 ## Quickstart

@@ -1,6 +1,6 @@
 {
   "name": "@localhost41/create-qvac-app",
-  "version": "0.1.0-alpha.2",
+  "version": "0.1.0-alpha.3",
   "description": "Scaffold a Node.js TypeScript app for local QVAC inference",
   "keywords": [
     "qvac",
