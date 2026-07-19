@@ -2,9 +2,14 @@
 
 ## Unreleased
 
+- No unreleased changes.
+
+## v0.1.0-alpha.3 - 2026-07-19
+
 - Use QVAC CLI's `127.0.0.1:11434` endpoint in generated apps and documentation.
 - Add npm discovery keywords and a benefit-oriented package description.
 - Clarify that this is an independent community project.
+- Upgrade npm in the release workflow to support OIDC trusted publishing.
 
 ## v0.1.0-alpha.2 - 2026-07-10
 
